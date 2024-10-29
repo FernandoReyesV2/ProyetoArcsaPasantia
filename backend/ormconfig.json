@@ -1,0 +1,9 @@
+{
+  "type": "mongodb",
+  "url": "mongodb+srv://freyesv2:xgLJVHNXO1ejOyGX@cluster0.zp49i.mongodb.net/?retryWrites=true&w=majority",
+  "database": "Pasante",
+  "useUnifiedTopology": true,
+  "entities": ["src/entities/*.ts"],
+  "synchronize": true,
+  "logging": false
+}
