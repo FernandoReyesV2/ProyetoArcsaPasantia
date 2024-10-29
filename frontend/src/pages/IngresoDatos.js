@@ -18,24 +18,18 @@ function IngresoDatos() {
   const [file, setFile] = useState(null); // Archivo cargado
   const [loading, setLoading] = useState(false); // Estado de carga
   const [tipos, setTipos] = useState([]); // Lista de tipos
-  const [seleccionado, setSeleccionado] = useState(''); // Seleccionado
-  const [otro, setOtro] = useState(''); // Seleccionado Otro
-  const [situacion, setSituacion] = useState(''); // Seleccion de Situacion CheckBoxes
-  const [declaración, setDeclaracion] = useState('');
 
-  // Declaracion Jurada
-  const manejarCambioDeclaracion = (e) =>{
-    const value = e.target.value;
-    setDeclaracion(value);
-    console.log(value);
-  }
-  
-  // Situacion Propuesta y Situacion Actual
-  const manejarCambioSituacion = (e) => {
-    const value = e.target.value;
-    setSituacion(value);
-    console.log(value); 
-  }
+  // Estado para recoger datos de los inputs
+  const [inputData, setInputData] = useState({
+    numeroIdentificacion: '',
+    fechaElaboracion: '',
+    situacionActual: false,
+    situacionPropuesta: false,
+    motivo: '',
+    declaracionJurada: '',
+    procesoInstitucional: '',
+    nivelGestion: ''
+  });
 
   // Efecto para cargar los tipos desde la base de datos al montar el componente
   useEffect(() => {
@@ -66,17 +60,19 @@ function IngresoDatos() {
     }
   };
 
-  // Manejar la seleccion de la opcion otro
-  const manejarCambioSeleccionado = (e) => {
-    const value = e.target.value;
-    setSeleccionado(value);
-    const seleccion = "Otro";
-    if (value === seleccion){
-      console.log(value);
-    }else{
-      console.log(value);
-    }
-  }
+    // Manejar el cambio de inputs
+  const manejarCambioInput = (e) => {
+    const { name, value, type, checked } = e.target;
+    setInputData(prevData => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+    // Función para recoger y mostrar los datos
+    const recogerDatos = () => {
+      console.log(inputData);
+    };
 
   // Manejar cambios en el campo de descripcion del tipo
   const manejarCambioTipoDescripcion = (e) => {
@@ -191,6 +187,9 @@ function IngresoDatos() {
             content={() => printRef.current} // Definir contenido a imprimir
           />
         </div>
+        <button onClick={recogerDatos} className='mt-4 p-2 bg-green-500 text-white rounded hover:bg-green-600'>
+          Recoger Datos
+        </button>
       </div>
       <div style={{ display: 'none' }}>
         <PrintContent ref={printRef} /> {/* Componente a imprimir */}
@@ -201,18 +200,22 @@ function IngresoDatos() {
           <li className='flex items-center justify-center my-2'>
             <label className="font-semibold p-2 w-48"> Ingrese Número de Identificación: </label>
             <input
+            name='numeroIdentificacion'
               className='w-full max-w-72 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
               placeholder='Número de Identificación'
               type='number'
               maxLength={10} // Limitar a 10 caracteres
+              onChange={manejarCambioInput}
             />
           </li>
           {/* FECHA ELABORACION */}
           <li className='flex items-center justify-center my-2'>
             <label className="font-semibold p-2 w-48"> Ingrese Fecha de Elaboración: </label>
             <input
+            name='fechaElaboracion'
               className='w-full max-w-72 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
               type='date'
+              onChange={manejarCambioInput}
             />
           </li>
           {/* SITUACION ACTUAL  y PROPUESTA*/}
@@ -220,32 +223,32 @@ function IngresoDatos() {
             {/* ACTUAL */}
             <label className="font-semibold p-2 w-48" htmlFor='situacion-actual'> Situación Actual: </label>
             <input
+              name='situacionActual'
               className='border border-gray-300 rounded-lg w-4 h-4 mx-4'
               type='checkbox'
               id='situacion-actual'
-              value={"Situacion Actual"}
-              onChange={manejarCambioSituacion}
+              onChange={manejarCambioInput}
             />
             {/* PROPUESTA */}
             <label className="font-semibold py-2 w-48" htmlFor='situacion-propuesta'> Situación Propuesta: </label>
             <input
+              name='situacionPropuesta'
               className='border border-gray-300 rounded-lg w-4 h-4 mx-4'
               type='checkbox'
               id='situacion-propuesta'
-              value={"Situacion Propuesta"}
-              onChange={manejarCambioSituacion}
+              onChange={manejarCambioInput}
             />
           </li>
-          {/* SELECCIONADO */}
+          {/* MOTIVO */}
           <li className='flex items-center justify-center my-2'>
-            <label className='font-semibold p-2 w-48' htmlFor="tipo">Seleccione: </label>
+            <label className='font-semibold p-2 w-48' htmlFor="tipo">Seleccione Motivo: </label>
             <select
+              name='motivo'
               className='w-full max-w-72 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
-              id='seleccionado'
-              value={seleccionado}
-              onChange={manejarCambioSeleccionado}
+              id='motivo'
+              onChange={manejarCambioInput}
               >
-              <option value="">Seleccione una opción: </option>
+              <option value="">Seleccione motivo: </option>
               <option value="Ingreso">Ingreso</option>
               <option value="Reingreso">Reingreso</option>
               <option value="Restitucion">Restitución</option>
@@ -271,11 +274,12 @@ function IngresoDatos() {
             <label className="font-semibold p-2 w-72 mr-3" htmlFor='declaracion-jurada'> Presentó la declaración jurada: </label>
             <label>Si</label>
             <input
+              name='declaracionJurada'
               className='border border-gray-300 rounded-lg w-4 h-4 mx-4'
               type='checkbox'
               id='declaracion-jurada'
               value={"Si"}
-              onChange={manejarCambioDeclaracion}
+              onChange={manejarCambioInput}
             />
             <label>No aplica</label>
             <input
@@ -283,25 +287,29 @@ function IngresoDatos() {
               type='checkbox'
               id='declaracion-jurada'
               value={"No"}
-              onChange={manejarCambioDeclaracion}
+              onChange={manejarCambioInput}
             />
           </li>
           {/* PROCESO INSTITUCIONAL */}
           <li className='flex items-center justify-center my-2'>
             <label className="font-semibold p-2 w-48"> Ingrese Proceso Institucional: </label>
             <input
+              name='procesoInstitucional'
               className='w-full max-w-72 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
               placeholder='Proceso Institucional'
               type='text'
+              onChange={manejarCambioInput}
             />
           </li>
           {/* NIVEL DE GESTION */}
           <li className='flex items-center justify-center my-2'>
             <label className="font-semibold p-2 w-48"> Ingrese Nivel de Gestión: </label>
             <input
+              name='nivelGestion'
               className='w-full max-w-72 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
               placeholder='Nivel de Gestión'
               type='text'
+              onChange={manejarCambioInput}
             />
           </li>
           {/* SELECCIONE TIPO */}
@@ -323,10 +331,6 @@ function IngresoDatos() {
             </select>
           </li>
         </ol>
-        {/* SELECCION
-        {seleccionado && (
-          <input placeholder='Ingrese el'></input>
-        )} */}
         {/* SELECCION DEL TIPO */}
         {tipoSeleccionado && ( // Mostrar campos adicionales si se seleccionó un tipo
           <div className='flex items-center justify-center my-2'>

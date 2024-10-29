@@ -1,10 +1,4 @@
-import { Entity, ObjectIdColumn, Column, ObjectId, OneToOne } from 'typeorm';
-import { Identificacion } from './Identificacion';
-import { Puesto } from './Puesto'
-import { Sucursal } from './Sucursal';
-import { RMU } from './RMU';
-import { Aportes } from './Aportes';
-import { Presupuesto } from './Presupuesto';
+import { Entity, ObjectIdColumn, Column, ObjectId } from 'typeorm';
 
 @Entity()
 export class Personal {
@@ -12,29 +6,35 @@ export class Personal {
   ID_Personal!: ObjectId;
 
   @Column()
-  Nombres!: string;
-  
-  @Column()
-  Apellidos!: string;
+  DocumentoIdentificacion!: string;
 
   @Column()
-  Partida_ind!: number;
+  NumeroIdentificacion!: number;
 
-  @OneToOne(() => Puesto, puesto => puesto.ID_Puesto, { eager: true})
-  Puesto!: Puesto;
+  @Column()
+  DesdeFecha!: string;
 
-  @OneToOne(() => Sucursal, sucursal => sucursal.ID_Sucursal, { eager: true})
-  Sucursal!: Sucursal;
+  @Column()
+  HastaFecha!: string;
 
-  @OneToOne(() => Identificacion, identificacion => identificacion.ID_Identificacion, { eager: true})
-  Identificacion!: Identificacion;
+  @Column()
+  UnidadAdministrativa!: string;
 
-  @OneToOne(() => RMU, rmu => rmu.ID_RMU, { eager: true})
-  RMU!: RMU;
+  @Column()
+  LugarTrabajo!: string;
 
-  @OneToOne(() => Presupuesto, presupuesto => presupuesto.ID_Presupuesto, { eager: true})
-  Presupuesto!: Presupuesto;
+  @Column()
+  DenominacionPuesto!: string;
 
-  @OneToOne(() => Aportes, aportes => aportes.ID_Aportes, { eager: true})
-  Aportes!: Aportes;
+  @Column()
+  GrupoOcupacional!: string;
+
+  @Column()
+  Grado!: string;
+
+  @Column()
+  RemuneracionMensual!: string;
+
+  @Column()
+  PartidaIndividual!: string;
 }

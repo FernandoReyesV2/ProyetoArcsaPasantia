@@ -3,21 +3,7 @@ import { getPersonal } from '../services/PersonalService';
 import logo from '../images/Logo.png'
 
 function AccionPersonal() {
-    const [acciones, setAcciones] = useState([]);
 
-
-    useEffect(() => {
-        const fetchAcciones = async () => {
-            try{
-                const data = await getPersonal();
-                setAcciones(data);
-            } catch (error) {
-                console.errror( "Error fetching acciones", error);
-            }
-        };
-    
-        fetchAcciones();
-    }, []);
   return (
     <div className='flex justify-center items-center min-h-screen'>
         <div className='text-xs w-[190mm] h-[275mm]'>
@@ -205,9 +191,9 @@ function AccionPersonal() {
                     <p className='text-center text-xs border-black border-b-2 border-r-2'>SITUACIÓN PROPUESTA</p>
                     <div className='grid grid-cols1 text-tiny border-black border-b-2 border-l-2 border-r-2 leading-3'>
                         <label className='bg-neutral-200 px-2'>PROCESO INSTITUCIONAL:</label>
-                        <label className='font-normal text-center bg-white'>1</label>
+                        <label className='font-normal text-center bg-white'></label>
                         <label className='bg-neutral-200 px-2'>NIVEL DE GESTIÓN:</label>
-                        <label className='font-normal text-center bg-white'>2</label>
+                        <label className='font-normal text-center bg-white'></label>
                         <label className='bg-neutral-200 px-2'>UNIDAD ADMNISTRATIVA:</label>
                         <label className='font-normal text-center bg-white'>3</label>
                         <label className='bg-neutral-200 px-2'>LUGAR DE TRABAJO:</label>

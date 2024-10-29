@@ -1,3 +1,4 @@
+// src/entities/AccionPersonal.ts
 import { Entity, ObjectIdColumn, Column, ObjectId } from 'typeorm';
 
 @Entity()
@@ -6,29 +7,26 @@ export class AccionPersonal {
   ID_AccionPersonal!: ObjectId;
 
   @Column()
-  Numero_Identificacion!: number;
+  NumeroIdentificacion!: number;
 
   @Column()
-  Fecha_Elaboracion!: Date;
+  FechaElaboracion!: string;
 
   @Column()
-  Situacion_Actual!: boolean;
+  SituacionActual!: boolean;
 
   @Column()
-  Situacion_Propuesta!: boolean;
+  SituacionPropuesta!: boolean;
 
   @Column()
-  Seleccion!: string;
-  
+  Motivo!: string;
+
   @Column()
-  Declaracion!: boolean;
-  
+  DeclaracionJurada!: boolean;
+
   @Column()
   ProcesoInstitucional!: string;
-  
+
   @Column()
   NivelGestion!: string;
-  
-  @Column()
-  Tipo_Descripcion!: string;
 }
