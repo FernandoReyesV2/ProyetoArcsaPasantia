@@ -21,15 +21,17 @@ function IngresoDatos() {
 
   // Estado para recoger datos de los inputs
   const [inputData, setInputData] = useState({
-    numeroIdentificacion: '',
-    fechaElaboracion: '',
-    situacionActual: false,
-    situacionPropuesta: false,
-    motivo: '',
-    declaracionJurada: '',
-    procesoInstitucional: '',
-    nivelGestion: ''
+    NumeroIdentificacion: '',
+    FechaElaboracion: '',
+    SituacionActual: false,
+    SituacionPropuesta: false,
+    Motivo: '',
+    DeclaracionJurada: false, // Asegúrate de que esto sea un booleano
+    ProcesoInstitucional: '',
+    NivelGestion: '',
+    Tipo: ''
   });
+  
 
   // Efecto para cargar los tipos desde la base de datos al montar el componente
   useEffect(() => {
@@ -44,21 +46,29 @@ function IngresoDatos() {
 
     fetchTipos(); // Llamada a la función para obtener tipos
   }, []);
+// Manejar el cambio en la selección del tipo
+const manejarCambio = (e) => {
+  const value = e.target.value; // Obtener valor seleccionado
+  setTipoSeleccionado(value); // Actualizar el estado con el tipo seleccionado
+  const tipo = tipos.find((t) => t.ID_Tipo === value); // Buscar el tipo en la lista
 
-  // Manejar el cambio en la selección del tipo
-  const manejarCambio = (e) => {
-    const value = e.target.value; // Obtener valor seleccionado
-    setTipoSeleccionado(value); // Actualizar el estado con el tipo seleccionado
-    const tipo = tipos.find((t) => t.ID_Tipo === value); // Buscar el tipo en la lista
-    if (tipo) {
-      setTipoDescripcion(tipo.Tipo); // Actualizar la descripcion del tipo
-      setTitulo(tipo.Titulo); // Actualizar título
-    } else {
-      // Si no se encuentra el tipo, reiniciar los valores de ingreso y título
-      setTipoDescripcion('');
-      setTitulo('');
-    }
-  };
+  // Actualizar el estado de inputData con la descripcion del tipo
+  setInputData(prevData => ({
+    ...prevData,
+    Tipo: tipo ? tipo.Tipo : '' // Cambia "tipo" a "Tipo" para que coincida con el nombre correcto
+  }));
+
+  if (tipo) {
+    setTipoDescripcion(tipo.Tipo); // Actualizar la descripcion del tipo
+    setTitulo(tipo.Titulo); // Actualizar título
+  } else {
+    // Si no se encuentra el tipo, reiniciar los valores de ingreso y título
+    setTipoDescripcion('');
+    setTitulo('');
+  }
+};
+
+
 
     // Manejar el cambio de inputs
   const manejarCambioInput = (e) => {
@@ -69,9 +79,86 @@ function IngresoDatos() {
     }));
   };
 
+  const validarDatos = (data) => {
+    const errors = [];
+
+    if (!data.NumeroIdentificacion) {
+        errors.push('Número de identificación es requerido.');
+    } else if (data.NumeroIdentificacion.length < 10) {
+        errors.push('Número de identificación debe tener al menos 10 caracteres.');
+    }
+
+    if (!data.FechaElaboracion) {
+        errors.push('Fecha de elaboración es requerida.');
+    } else {
+        const fecha = new Date(data.FechaElaboracion);
+        if (isNaN(fecha)) {
+            errors.push('Fecha de elaboración debe ser una fecha válida.');
+        }
+    }
+
+    if (typeof data.SituacionActual !== 'boolean') {
+        errors.push('Situación actual debe ser un valor booleano.');
+    }
+
+    if (typeof data.SituacionPropuesta !== 'boolean') {
+        errors.push('Situación propuesta debe ser un valor booleano.');
+    }
+
+    if (!data.Motivo) {
+        errors.push('Motivo es requerido.');
+    }
+
+    if (typeof data.DeclaracionJurada !== 'boolean') {
+        errors.push('Declaración jurada debe ser un valor booleano.');
+    }
+
+    if (!data.ProcesoInstitucional) {
+        errors.push('Proceso institucional es requerido.');
+    }
+
+    if (!data.NivelGestion) {
+        errors.push('Nivel de gestión es requerido.');
+    }
+
+    if (!data.Tipo) {
+        errors.push('Tipo es requerido.');
+    }
+
+    return errors; // Devuelve un array de errores
+};
+
+
+// Función para enviar los datos a la base de datos
+const enviarDatos = async () => {
+  const errores = validarDatos(inputData);
+  if (errores.length > 0) {
+      console.error('Errores de validación:', errores);
+      return; // No enviar si hay errores
+  }
+
+  console.log('Datos a enviar:', JSON.stringify(inputData, null, 2));
+  try {
+      const response = await axios.post('http://localhost:3001/api/accion', inputData);
+      console.log('Datos enviados:', response.data);
+  } catch (error) {
+    if (error.response) {
+        console.error('Error al enviar datos:', error.response.data);
+        console.error('Detalles del error:', error.response);
+    } else {
+        console.error('Error al enviar datos:', error.message);
+    }
+}
+
+};
+
+
+
     // Función para recoger y mostrar los datos
     const recogerDatos = () => {
       console.log(inputData);
+      inputData.NumeroIdentificacion = Number(inputData.NumeroIdentificacion);
+      enviarDatos()
     };
 
   // Manejar cambios en el campo de descripcion del tipo
@@ -177,7 +264,7 @@ function IngresoDatos() {
           <div className='text-center text-sm'>Última Actualización:</div>
           <div className='text-center text-sm'></div>
         </div>
-        <div className='ml-auto mx-18'>
+        <div className='ml-auto'>
           <ReactToPrint
             trigger={() => (
               <button className='p-2 bg-blue-500 text-white rounded hover:bg-blue-700 font-semibold'>
@@ -187,9 +274,9 @@ function IngresoDatos() {
             content={() => printRef.current} // Definir contenido a imprimir
           />
         </div>
-        <button onClick={recogerDatos} className='mt-4 p-2 bg-green-500 text-white rounded hover:bg-green-600'>
-          Recoger Datos
-        </button>
+          <button onClick={recogerDatos} className='ml-2 p-2 bg-green-500 text-white rounded hover:bg-green-600'>
+            Recoger Datos
+          </button>
       </div>
       <div style={{ display: 'none' }}>
         <PrintContent ref={printRef} /> {/* Componente a imprimir */}
@@ -200,7 +287,7 @@ function IngresoDatos() {
           <li className='flex items-center justify-center my-2'>
             <label className="font-semibold p-2 w-48"> Ingrese Número de Identificación: </label>
             <input
-            name='numeroIdentificacion'
+            name='NumeroIdentificacion'
               className='w-full max-w-72 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
               placeholder='Número de Identificación'
               type='number'
@@ -212,7 +299,7 @@ function IngresoDatos() {
           <li className='flex items-center justify-center my-2'>
             <label className="font-semibold p-2 w-48"> Ingrese Fecha de Elaboración: </label>
             <input
-            name='fechaElaboracion'
+            name='FechaElaboracion'
               className='w-full max-w-72 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
               type='date'
               onChange={manejarCambioInput}
@@ -223,7 +310,7 @@ function IngresoDatos() {
             {/* ACTUAL */}
             <label className="font-semibold p-2 w-48" htmlFor='situacion-actual'> Situación Actual: </label>
             <input
-              name='situacionActual'
+              name='SituacionActual'
               className='border border-gray-300 rounded-lg w-4 h-4 mx-4'
               type='checkbox'
               id='situacion-actual'
@@ -232,7 +319,7 @@ function IngresoDatos() {
             {/* PROPUESTA */}
             <label className="font-semibold py-2 w-48" htmlFor='situacion-propuesta'> Situación Propuesta: </label>
             <input
-              name='situacionPropuesta'
+              name='SituacionPropuesta'
               className='border border-gray-300 rounded-lg w-4 h-4 mx-4'
               type='checkbox'
               id='situacion-propuesta'
@@ -243,7 +330,7 @@ function IngresoDatos() {
           <li className='flex items-center justify-center my-2'>
             <label className='font-semibold p-2 w-48' htmlFor="tipo">Seleccione Motivo: </label>
             <select
-              name='motivo'
+              name='Motivo'
               className='w-full max-w-72 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
               id='motivo'
               onChange={manejarCambioInput}
@@ -266,22 +353,23 @@ function IngresoDatos() {
               <option value="Cesacion">Cesación de Funciones</option>
               <option value="Destitucion">Destitución</option>
               <option value="Vacaciones">Vacaciones</option>
+              <option value="Revision">Revision Clasi. Puesto</option>
               <option value="Otro">Otro: </option>
             </select>
           </li>
           {/* DECLARACION JURIDICA */}
           <li className='flex items-center justify-center my-2'>
-            <label className="font-semibold p-2 w-72 mr-3" htmlFor='declaracion-jurada'> Presentó la declaración jurada: </label>
-            <label>Si</label>
+            <label className="font-semibold p-2 w-auto" htmlFor='declaracion-jurada'> Presentó la declaración jurada: </label>
+            <label className='w-14 text-center'>Si</label>
             <input
-              name='declaracionJurada'
+              name='DeclaracionJurada'
               className='border border-gray-300 rounded-lg w-4 h-4 mx-4'
               type='checkbox'
               id='declaracion-jurada'
               value={"Si"}
               onChange={manejarCambioInput}
             />
-            <label>No aplica</label>
+            <label className='w-24 text-center'>No aplica</label>
             <input
               className='border border-gray-300 rounded-lg w-4 h-4 mx-4'
               type='checkbox'
@@ -294,7 +382,7 @@ function IngresoDatos() {
           <li className='flex items-center justify-center my-2'>
             <label className="font-semibold p-2 w-48"> Ingrese Proceso Institucional: </label>
             <input
-              name='procesoInstitucional'
+              name='ProcesoInstitucional'
               className='w-full max-w-72 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
               placeholder='Proceso Institucional'
               type='text'
@@ -305,7 +393,7 @@ function IngresoDatos() {
           <li className='flex items-center justify-center my-2'>
             <label className="font-semibold p-2 w-48"> Ingrese Nivel de Gestión: </label>
             <input
-              name='nivelGestion'
+              name='NivelGestion'
               className='w-full max-w-72 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
               placeholder='Nivel de Gestión'
               type='text'

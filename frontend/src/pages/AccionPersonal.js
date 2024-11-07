@@ -3,7 +3,20 @@ import { getPersonal } from '../services/PersonalService';
 import logo from '../images/Logo.png'
 
 function AccionPersonal() {
-
+    const [personalData, setPersonalData] = useState([]); // Estado para almacenar los datos obtenidos
+    const [loading, setLoading] = useState(true);
+  
+    useEffect(() => {
+        // Llamada a la función para obtener los datos
+        getPersonal()
+          .then((data) => {
+            console.log("Datos recibidos:", data); // Muestra los datos en la consola
+            setPersonalData(data); // Guarda los datos en el estado
+          })
+          .catch((error) => {
+            console.error("Error al obtener los datos:", error);
+          });
+      }, []);
   return (
     <div className='flex justify-center items-center min-h-screen'>
         <div className='text-xs w-[190mm] h-[275mm]'>
@@ -17,16 +30,16 @@ function AccionPersonal() {
                             <p className='border-black border-b-2 font-bold text-center'></p>
                         </div>
                         <p className='px-2 text-center font-bold border-black border-b-2 text-tiny' >FECHA DE ELABORACIÓN</p>
-                        <p className='text-center text-tiny'></p>
+                        <p className='text-center text-tiny'>{personalData.length > 0 ? personalData[0].FechaElaboracion : 'Cargando...'}</p>
                     </div>
                 </div>
                 <div className='grid grid-cols-2'>
                     <div className='text-center font-bold border-black border-r-2'>
-                        <label className='font-bold text-xl block leading-3 mt-1'></label>
+                        <label className='font-bold text-xl block leading-3 mt-1'>ROMERO CRUZ</label>
                         <label className='text-tiny'>APELLIDOS</label>
                     </div>
                     <div className='text-center font-bold'>
-                        <label className='text-xl block leading-3 mt-1'></label>
+                        <label className='text-xl block leading-3 mt-1'>MAYLEN ALEXANDRA</label>
                         <label className='text-tiny'>NOMBRES</label>
                     </div>
                 </div>
@@ -39,7 +52,7 @@ function AccionPersonal() {
                     </div>
                     <div className='text-center font-bold border-black border-r-2 flex flex-col justify-center h-full'>
                         <p className='border-black border-b-2 h-9 flex items-center justify-center'>NRO. DE IDENTIFICACIÓN</p>
-                        <p className='font-normal'></p>
+                        <p className='font-normal'>0{personalData.length > 0 ? personalData[0].NumeroIdentificacion : 'Cargando...'}</p>
                     </div>
                     <div className='col-span-2 text-tiny'>
                         <p className='pl-5 text-center border-black border-b-2'>RIGE: </p>
@@ -62,27 +75,28 @@ function AccionPersonal() {
                         <ol className="pl-2">
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="ingreso">INGRESO</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox"  checked={personalData.length > 0 && personalData[0].Motivo === "Ingreso"}
+                readOnly ></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="reingreso">REINGRESO</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Reingreso"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="restitucion">RESTITUCIÓN</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Restitucion"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="reintegro">REINTEGRO</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Reintegro"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="ascenso">ASCENSO</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Ascenso"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="traslado">TRASLADO</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Traslado"}></input>
                             </li>
                         </ol>
                     </div>
@@ -91,27 +105,27 @@ function AccionPersonal() {
                         <ol className="">
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="traspaso">TRASPASPO</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Traspaso"} ></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="cambio-administrativo">CAMBIO ADMINISTRATIVO</label>
-                                <input className='w-3 h-3' type="checkbox" ></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Cambio"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="intercambio-voluntario">INTERCAMBIO VOLUNTARIO</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Intercambio"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="licencia">LICENCIA</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Licencia"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="comision-servicios">COMISIÓN DE SERVICIOS</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Comision"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="sanciones">SANCIONES</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Sanciones"}></input>
                             </li>
                         </ol>
                     </div>
@@ -120,27 +134,27 @@ function AccionPersonal() {
                         <ol className="">
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="incremento-rmu">INCREMENTO RMU</label>
-                                <input className='w-3 h-3' type="checkbox" ></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Incremento"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="subrogacion">SUBROGACIÓN</label>
-                                <input className='w-3 h-3' type="checkbox" ></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Subrogacion"} ></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="encargo">ENCARGO</label>
-                                <input className='w-3 h-3' type="checkbox" ></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Encargo"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="cesacion">CESACIÓN DE FUNCIONES</label>
-                                <input className='w-3 h-3' type="checkbox" ></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Cesacion"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="destitucion">DESTITUCIÓN</label>
-                                <input className='w-3 h-3' type="checkbox" ></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Destitucion"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="vacaciones">VACACIONES</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Vacaciones"}></input>
                             </li>
                         </ol>
                     </div>
@@ -149,11 +163,11 @@ function AccionPersonal() {
                         <ol className="px-2">
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="revision-clasi-puesto">REVISIÓN CLASI. PUESTO</label>
-                                <input className='w-3 h-3' type="checkbox"></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Revision"}></input>
                             </li>
                             <li className='flex items-center'>
                                 <label className='flex-1' htmlFor="otro">OTRO (DETALLAR)</label>
-                                <input className='w-3 h-3' type="checkbox" id='otro'></input>
+                                <input className='w-3 h-3' type="checkbox" checked={personalData.length > 0 && personalData[0].Motivo === "Otro"}></input>
                             </li>
                             <li>
                                 <p>_________________________________</p>
@@ -169,11 +183,13 @@ function AccionPersonal() {
                     <label className='col-span-2'><strong>* PRESENTÓ LA DECLARACIÓN JURADA</strong> (número 2 del art. 3 RLOSEP)</label>
                     <div className='flex items-center'>
                         <label className='' id='si-aplica'>SI</label>
-                        <input className='w-4 h-4 ml-2' type='checkbox' id='si-aplica'></input>
+                        <input className='w-4 h-4 ml-2' type='checkbox' id='si-aplica'  checked={personalData.length > 0 && personalData[0].DeclaracionJurada === true}
+                readOnly ></input>
                     </div>
                     <div className='flex items-center'>
                         <label htmlFor='no-aplica'> NO APLICA</label>
-                        <input className='w-4 h-4 ml-2' type='checkbox' id='no-aplica'></input>
+                        <input className='w-4 h-4 ml-2' type='checkbox' id='no-aplica'  checked={personalData.length > 0 && personalData[0].DeclaracionJurada === false}
+                readOnly ></input>
                     </div>
                     
                 </div>
@@ -182,7 +198,7 @@ function AccionPersonal() {
             <section className='border-b-2 border-r-2 border-l-2 border-black'>
                 <p className='text-xs border-black border-b-2 px-2'> <strong>MOTIVACIÓN: </strong>(adjuntar anexo si lo posee)</p>
                 <div className='px-2 py-1 min-h-56'>
-                    <p className='text-stiny text-justify'>hola este es un texto de ejemplo. Creo que es suficiente, pero vamos a probar con un dialogo más largo para ver como se ajusta. Necesito más texto, empecemos con una canción. Traigo seis millones de maneras de rimar, solo una de vivir, soy bboy hasta la muerte es lo que quiero decir, no me compares a un rapero que rima por rimar, Javier Ibarra es único, un icono del puto rap. He rimado más de mil palabras y aún quiero más, sobre el ritmo </p>
+                    <p className='text-stiny text-justify'>{personalData.length > 0 ? personalData[0].Tipo : 'Cargando...'}</p>
                 </div>
             </section>
             <section>
@@ -191,9 +207,9 @@ function AccionPersonal() {
                     <p className='text-center text-xs border-black border-b-2 border-r-2'>SITUACIÓN PROPUESTA</p>
                     <div className='grid grid-cols1 text-tiny border-black border-b-2 border-l-2 border-r-2 leading-3'>
                         <label className='bg-neutral-200 px-2'>PROCESO INSTITUCIONAL:</label>
-                        <label className='font-normal text-center bg-white'></label>
+                        <label className='font-normal text-center bg-white'>{personalData.length > 0 && personalData[0].SituacionActual === true ? personalData[0].ProcesoInstitucional : ''} </label>
                         <label className='bg-neutral-200 px-2'>NIVEL DE GESTIÓN:</label>
-                        <label className='font-normal text-center bg-white'></label>
+                        <label className='font-normal text-center bg-white'>{personalData.length > 0 && personalData[0].SituacionActual === true ? personalData[0].NivelGestion : ''}</label>
                         <label className='bg-neutral-200 px-2'>UNIDAD ADMNISTRATIVA:</label>
                         <label className='font-normal text-center bg-white'>3</label>
                         <label className='bg-neutral-200 px-2'>LUGAR DE TRABAJO:</label>
@@ -211,9 +227,9 @@ function AccionPersonal() {
                     </div>
                     <div className='grid grid-cols1 text-tiny border-black border-b-2 border-r-2 leading-3'>
                         <label className='bg-neutral-200 px-2'>PROCESO INSTITUCIONAL:</label>
-                        <label className='font-normal text-center bg-white'></label>
+                        <label className='font-normal text-center bg-white'>{personalData.length > 0 && personalData[0].SituacionPropuesta === true ? personalData[0].ProcesoInstitucional : ' '} </label>
                         <label className='bg-neutral-200 px-2'>NIVEL DE GESTIÓN:</label>
-                        <label className='font-normal text-center bg-white'></label>
+                        <label className='font-normal text-center bg-white'>{personalData.length > 0 && personalData[0].SituacionPropuesta === true ? personalData[0].NivelGestion : ' '}</label>
                         <label className='bg-neutral-200 px-2'>UNIDAD ADMNISTRATIVA:</label>
                         <label className='font-normal text-center bg-white'></label>
                         <label className='bg-neutral-200 px-2'>LUGAR DE TRABAJO:</label>

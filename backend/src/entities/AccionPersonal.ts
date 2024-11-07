@@ -29,4 +29,7 @@ export class AccionPersonal {
 
   @Column()
   NivelGestion!: string;
+
+  @Column()
+  Tipo!: string;
 }

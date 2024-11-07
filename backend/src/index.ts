@@ -6,7 +6,7 @@ import express from 'express';
 
 // ENTIDADES
 import { Tipo } from './entities/Tipo';
-import { AccionPersonal } from './entities/AccionPersonal';
+import { AccionPersonal } from './entities/accionPersonal';
 
 // RUTAS
 import tipoRoutes from './routes/tipoRoutes';

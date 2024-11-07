@@ -1,21 +1,6 @@
 import React, { useState, useEffect }from "react";
-import { getPersonal } from '../services/PersonalService';
 
 function AccionPersonal2(){
-    const [acciones, setAcciones] = useState([]);
-
-    useEffect(() => {
-        const fetchAcciones = async () => {
-            try{
-                const data = await getPersonal();
-                setAcciones(data);
-            } catch (error) {
-                console.errror( "Error fetching acciones", error);
-            }
-        };
-    
-        fetchAcciones();
-    }, []);
 
     return(
         <div className='flex justify-center items-center min-h-screen'>

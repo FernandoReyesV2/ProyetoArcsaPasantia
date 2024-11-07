@@ -1,14 +1,43 @@
 // src/controllers/accionController.ts
 import { Request, Response } from 'express';
 import { dataSource } from '../index';
-import { AccionPersonal } from '../entities/AccionPersonal';
+import { AccionPersonal } from '../entities/accionPersonal';
 import { ObjectId } from 'mongodb';
 
 export class AccionPersonalController {
   // Crear una nueva acción de personal
   async create(req: Request, res: Response) {
     const accionPersonalRepository = dataSource.getMongoRepository(AccionPersonal);
-    const accionPersonal = accionPersonalRepository.create(req.body);
+
+    // Asegúrate de que req.body contiene todos los campos necesarios
+    const {
+      NumeroIdentificacion,
+      FechaElaboracion,
+      SituacionActual,
+      SituacionPropuesta,
+      Motivo,
+      DeclaracionJurada,
+      ProcesoInstitucional,
+      NivelGestion,
+      Tipo,
+    } = req.body;
+
+    // Validación básica (puedes ajustar según tus necesidades)
+    if (!NumeroIdentificacion || !FechaElaboracion || !Tipo) {
+      return res.status(400).json({ error: 'Faltan campos requeridos' });
+    }
+
+    const accionPersonal = accionPersonalRepository.create({
+      NumeroIdentificacion,
+      FechaElaboracion,
+      SituacionActual,
+      SituacionPropuesta,
+      Motivo,
+      DeclaracionJurada,
+      ProcesoInstitucional,
+      NivelGestion,
+      Tipo,
+    });
 
     try {
       await accionPersonalRepository.save(accionPersonal);
@@ -38,6 +67,7 @@ export class AccionPersonalController {
         return res.status(404).json({ error: 'Acción de personal no encontrada' });
       }
 
+      // Actualizar solo los campos que se proporcionan
       accionPersonalRepository.merge(accionPersonal, req.body);
       const result = await accionPersonalRepository.save(accionPersonal);
       return res.json(result);
