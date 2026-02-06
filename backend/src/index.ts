@@ -15,7 +15,7 @@ import accionRoutes from './routes/accionRoutes';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001; // Puedes usar una variable de entorno para el puerto
+const PORT = process.env.PORT || 3001; 
 
 // Configuración de la base de datos
 export const dataSource = new DataSource({
@@ -25,8 +25,8 @@ export const dataSource = new DataSource({
   useNewUrlParser: true,
   useUnifiedTopology: true,
   entities: [Tipo, AccionPersonal],
-  synchronize: true, // Ten cuidado con esto en producción
-  logging: true // Cambia a false en producción
+  synchronize: true, 
+  logging: true 
 });
 
 // Middleware
